@@ -1,6 +1,8 @@
 import json
 from datetime import datetime
 import requests
+import base64
+import os
 
 JSON_INPUT = 'miizy_dump.json'
 JSON_OUTPUT = 'miizy_properties_structured.json'
@@ -334,6 +336,91 @@ def show_statistics(properties_list):
         if count > 0:
             print(f"   - {price_range}: {count} biens")
 
+def push_file_to_github():
+    # Configuration GitHub
+    GITHUB_USERNAME = "danhab05"
+    REPO_NAME = "MiizyApi"
+    FILE_PATH = "miizy_properties_structured.json"
+    BRANCH = "main"
+
+    # Vous devez mettre votre token GitHub ici
+    # Créez un token sur https://github.com/settings/tokens
+    GITHUB_TOKEN = "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"  # Remplacez par votre token
+
+    # Chemin du fichier local
+    local_file_path = "miizy_properties_structured.json"
+
+    if not os.path.exists(local_file_path):
+        print(f"❌ Fichier {local_file_path} introuvable!")
+        return False
+
+    print(f"📁 Lecture du fichier {local_file_path}...")
+
+    # Lire le fichier local
+    with open(local_file_path, 'r', encoding='utf-8') as f:
+        file_content = f.read()
+
+    # Encoder en base64
+    content_encoded = base64.b64encode(
+        file_content.encode('utf-8')).decode('utf-8')
+
+    # URL de l'API GitHub
+    api_url = f"https://api.github.com/repos/{GITHUB_USERNAME}/{REPO_NAME}/contents/{FILE_PATH}"
+
+    # Headers
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+
+    print("🔍 Vérification si le fichier existe déjà sur GitHub...")
+
+    # Vérifier si le fichier existe déjà pour récupérer son SHA
+    response = requests.get(api_url, headers=headers)
+
+    if response.status_code == 200:
+        # Le fichier existe, récupérer son SHA
+        existing_file = response.json()
+        sha = existing_file['sha']
+        print("✅ Fichier existant trouvé, mise à jour...")
+    elif response.status_code == 404:
+        # Le fichier n'existe pas
+        sha = None
+        print("📝 Nouveau fichier, création...")
+    else:
+        print(f"❌ Erreur lors de la vérification: {response.status_code}")
+        print(response.text)
+        return False
+
+    # Préparer les données pour l'upload
+    data = {
+        "message": "Update miizy_properties_structured.json via Python script",
+        "content": content_encoded,
+        "branch": BRANCH
+    }
+
+    # Ajouter le SHA si le fichier existe déjà
+    if sha:
+        data["sha"] = sha
+
+    print("🚀 Upload vers GitHub en cours...")
+
+    # Faire la requête PUT pour créer/modifier le fichier
+    response = requests.put(api_url, headers=headers, json=data)
+
+    if response.status_code in [200, 201]:
+        print("✅ Fichier uploadé avec succès sur GitHub!")
+        print(
+            f"🔗 URL: https://github.com/{GITHUB_USERNAME}/{REPO_NAME}/blob/{BRANCH}/{FILE_PATH}")
+        print(
+            f"🔗 Raw URL: https://raw.githubusercontent.com/{GITHUB_USERNAME}/{REPO_NAME}/{BRANCH}/{FILE_PATH}")
+        return True
+    else:
+        print(f"❌ Erreur lors de l'upload: {response.status_code}")
+        print(response.text)
+        return False
+
+
 
 def main():
     create_miizy_dump()
@@ -348,6 +435,12 @@ def main():
             print(f"\n🎉 Analyse terminée avec succès!")
             print(f"📄 Fichier créé:")
             print(f"   - {JSON_OUTPUT}")
+            # Push vers GitHub
+            if push_file_to_github():
+                print("🎉 Fichier uploadé sur GitHub avec succès!")
+            else:   
+                print("💥 Échec de l'upload sur GitHub!")
+                
         else:
             print("❌ Échec de la sauvegarde")
     else:
