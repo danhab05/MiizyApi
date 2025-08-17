@@ -37,14 +37,8 @@ def create_miizy_dump():
 def get_property_type(type_code):
     """Convertit le code type en description"""
     type_mapping = {
+        0: "Maison",
         1: "Appartement",
-        2: "Maison",
-        3: "Studio",
-        4: "Duplex",
-        5: "Triplex",
-        6: "Loft",
-        7: "Villa",
-        8: "Pavillon"
     }
     return type_mapping.get(type_code, f"Type {type_code}" if type_code else "N/A")
 
