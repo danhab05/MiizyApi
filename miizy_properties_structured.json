@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "extraction_date": "2026-03-12T03:04:32.485683",
-    "total_properties": 26038,
+    "extraction_date": "2026-03-13T03:04:46.925879",
+    "total_properties": 26037,
     "description": "Données immobilières Miizy structurées par bien",
     "source": "miizy_dump.json"
   },
@@ -539791,29 +539791,6 @@
       "Programme": "PARK VIEW 2",
       "Reference": "L581746",
       "Fiscalite": "Accession",
-      "Status": 0
-    },
-    {
-      "Ville": "Toulouse",
-      "Code_Postal": "31000",
-      "Adresse_de_publication": "chemin de Hérédia",
-      "Type": "Appartement",
-      "Typologie": "3 pièces",
-      "Etage": 2,
-      "Metre": "61.68",
-      "Prix": 302900,
-      "VAT": "20.0",
-      "Parking": "Oui (1 place)",
-      "Cave": "Non",
-      "Exterieur_principale": "Balcon",
-      "Surface_exterieur_1": 6.11,
-      "Chambre": 2,
-      "Nombre_SDB_WC": 1,
-      "Date_de_livraison": "T3 2027",
-      "Promoteur": "Green City",
-      "Programme": "HEREDIA",
-      "Reference": "L581590",
-      "Fiscalite": "",
       "Status": 0
     },
     {
